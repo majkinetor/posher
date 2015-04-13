@@ -23,10 +23,11 @@ Posher can be used for:
 Prerequisites
 -------------
 
-- `Packer <https://www.packer.io/>`__.
+- `Windows Management Framework 4.0 <http://www.microsoft.com/en-us/download/details.aspx?id=40855>`_ or newer.
+- `Packer <https://www.packer.io/>`__
 - `VirtualBox <https://www.virtualbox.org>`__  (if the build type includes VirtualBox output)
 - `vmWare Workstation <http://www.vmware.com/products/workstation>`__ (if the build type includes vmware output)
-- `Vagrant <https://www.vagrantup.com/>` (to test virtualbox boxes)
+- `Vagrant <https://www.vagrantup.com/>`__ (to test virtualbox boxes)
 
 The easiest way to install all open source prerequisites is via `Chocolatey <https://chocolatey.org>`__ repository::
 
