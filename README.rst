@@ -116,7 +116,7 @@ WINDOWS_FEATURES
     List of Windows features that are shipped with OS and installed using ``OptionalFeatures.exe`` on workstation Windows (Control Panel -> Turn Windows Features On or Off) or using Server Manager Roles and Features GUI interface on server. To get the complete list of features using the following cmdlets: ``Get-WindowsOptionalFeature`` (workstation) and ``Get-WindowsFeature`` (server).
 
 PROVISION
-    A list of provisioning Powershell [ScriptBlock]s. Each machine can add its own provisioner here.
+    A list of provisioning Powershell ``[ScriptBlock]``s. Each machine can add its own provisioner here.
 
 Each of those options can be turned on or off using simple Powershell statement. For instance::
 
