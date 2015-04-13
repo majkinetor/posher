@@ -102,7 +102,7 @@ Later we can either build this base server or create another machine based on it
 
 In above example we add new Windows features to the list ``WINDOWS_FEATURE_LIST`` (hence `+=`) of already specified features in the base server. ``BOX_XXX`` variables are related to the Vagrant box generation for machine testing and development environments. Depending on the option in question, machine can inherit the option, redefine it, or add it to the list of existing options.
 
-The machines can be defined this way to arbitrary depth and any machine in hiearrachy can bu built by specifying its name as an argument to the build function.
+The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument to the build function.
 
 The build system currently supports the following options that are so commonly tweaked that they deserved to be specially handled:
 
@@ -116,7 +116,7 @@ WINDOWS_FEATURES
     List of Windows features that are shipped with OS and installed using ``OptionalFeatures.exe`` on workstation Windows (Control Panel -> Turn Windows Features On or Off) or using Server Manager Roles and Features GUI interface on server. To get the complete list of features using the following cmdlets: ``Get-WindowsOptionalFeature`` (workstation) and ``Get-WindowsFeature`` (server).
 
 PROVISION
-    A list of provisioning Powershell ``[ScriptBlock]``s. Each machine can add its own provisioner here.
+    A list of provisioning Powershell scriptblocks. Each machine can add its own provisioner here.
 
 Each of those options can be turned on or off using simple Powershell statement. For instance::
 
@@ -153,9 +153,11 @@ More info
 ---------
 
 **Articles**
+
 - `Virtualize Your Windows Development Environments with Vagrant, Packer, and Chocolatey <http://www.developer.com/net/virtualize-your-windows-development-environments-with-vagrant-packer-and-chocolatey-part-1.html>`__
 - `In search of a light weight windows vagrant box <http://www.hurryupandwait.io/blog/in-search-of-a-light-weight-windows-vagrant-box>`__
 
 **Related Projects**
+
 - `Packer-Windows <https://github.com/joefitzgerald/packer-windows>`__
 - `Boxcutter Windows templates <https://github.com/boxcutter/windows>`__
