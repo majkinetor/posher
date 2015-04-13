@@ -1,0 +1,17 @@
+{
+    "description": "$BOX_DESCRIPTION",
+    "short_description": "",
+    "name": "$BOX_NAME",
+    "versions": [{
+        "version": "$BOX_VERSION",
+        "status": "active",
+        "description_html": "Repository revision: $BOX_REVISION",
+        "description_markdown": "",
+        "providers": [
+            {
+                "name": "virtualbox",
+                "url": "$BOX_URL"
+            }
+        ]
+    }]
+}

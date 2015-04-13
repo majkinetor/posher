@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.require_version ">= 1.7.2"
+
+$store_remote = 'file:////itshare.mfin.trezor.rs/razvoj/coz/_images'
+$store_local  = '../packer/output'
+def get_box_url( name ) $local ? "#{$store_local}/#{name}/#{name}-virtualbox.box" : "#{$store_remote}/#{name}/#{name}.json" end
+
+$gui   = !ENV['VAGRANT_GUI'].nil?
+$local = ENV['VAGRANT_LOCAL']
+
+Vagrant.configure("2") do |config|
+
+    config.vm.communicator = "winrm"
+    config.winrm.username = "vagrant"
+    config.winrm.password = "vagrant"
+
+    config.windows.halt_timeout = 15
+    config.windows.set_work_network = true
+
+    config.vm.guest = :windows
+    config.vm.boot_timeout = 600
+    config.vm.network :forwarded_port, guest: 3389, host: 33389, id: "rdp", auto_correct: true
+    config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
+    config.vm.synced_folder "..", "/vagrant_data"
+
+    config.vm.define "devel", autostart: false do |c|
+        c.vm.box      = "coz-devel"
+        c.vm.hostname = c.vm.box
+        c.vm.box_url  = get_box_url c.vm.box
+        c.vm.network "private_network", ip: "192.168.1.10"
+        c.vm.provider "virtualbox" do |v|
+            v.name = c.vm.box
+        end
+    end
+
+    config.vm.define "server-web", autostart: false  do |c|
+        c.vm.box      = "coz-server-web"
+        c.vm.hostname = c.vm.box
+        c.vm.box_url  = get_box_url c.vm.box
+        c.vm.network "private_network", ip: "192.168.0.10"
+        c.vm.provider "virtualbox" do |v|
+            v.name = c.vm.box
+        end
+    end
+
+    config.vm.define "core", autostart: false do |c|
+        c.vm.box      = "coz-server-core-web"
+        c.vm.hostname = c.vm.box
+        c.vm.box_url  = get_box_url c.vm.box
+        c.vm.network "private_network", ip: "192.168.0.11"
+        c.vm.provider "virtualbox" do |v|
+            v.name = c.vm.box
+        end
+    end
+
+    config.vm.provider "virtualbox" do |v|
+        v.gui    = $gui
+        v.memory = 4096
+        v.cpus   = 4
+    end
+end

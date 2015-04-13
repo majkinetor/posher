@@ -1,0 +1,112 @@
+{
+   "variables":        {
+        "iso_store":    "iso",
+        "iso_name":     "$OS_ISO_NAME",
+        "iso_checksum": "$OS_ISO_CHECKSUM",
+
+        "ssh_name":     "vagrant",
+        "ssh_pass":     "vagrant",
+
+        "shutdown":     "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+
+        "cpu":          "4",
+        "mem":          "4096",
+        "disk":         "61440",
+
+        "headless":     $BUILD_HEADLESS,
+        "output_dir":   "output/${BUILD_NAME}"
+  },
+  "builders": [
+    {
+      "name": "${BUILD_NAME}-vmware",
+      "type": "vmware-iso",
+      "iso_url": "{{user ``iso_store``}}/{{user ``iso_name``}}.iso",
+      "iso_checksum": "{{user ``iso_checksum``}}",
+      "iso_checksum_type": "sha1",
+
+      "headless": "{{user ``headless``}}",
+      "boot_wait": "2m",
+
+      "ssh_username": "{{user ``ssh_name``}}",
+      "ssh_password": "{{user ``ssh_pass``}}",
+      "ssh_wait_timeout": "4h",
+
+      "shutdown_command": "{{user ``shutdown``}}",
+      "guest_os_type": "$OS_TYPE_VMWARE",
+      "disk_size": "{{user ``disk``}}",
+      "disk_type_id": "0",
+      "tools_upload_flavor": "windows",
+      "floppy_files": [ "$BUILD_ANSWERFILE", "./scripts", "./machines", "./tmp/__machine.ps1" ],
+
+      "vnc_port_min": 5900,
+      "vnc_port_max": 5980,
+
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "{{user ``mem``}}",
+        "numvcpus": "{{user ``cpu``}}",
+        "scsi0.virtualDev": "lsisas1068"
+      },
+      "output_directory": "{{user ``output_dir``}}/vmware"
+    },
+
+    {
+      "name": "${BUILD_NAME}-virtualbox",
+      "type": "virtualbox-iso",
+      "iso_url": "{{user ``iso_store``}}/{{user ``iso_name``}}.iso",
+      "iso_checksum": "{{user ``iso_checksum``}}",
+      "iso_checksum_type": "sha1",
+
+      "headless": "{{user ``headless``}}",
+      "boot_wait": "2m",
+
+      "ssh_username": "{{user ``ssh_name``}}",
+      "ssh_password": "{{user ``ssh_pass``}}",
+      "ssh_wait_timeout": "4h",
+
+      "shutdown_command": "{{user ``shutdown``}}",
+      "guest_os_type": "$OS_TYPE_VIRTUALBOX",
+      "disk_size": "{{user ``disk``}}",
+      "floppy_files": [ "$BUILD_ANSWERFILE", "./scripts", "./machines", "./tmp/__machine.ps1" ],
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "{{user ``mem``}}" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "{{user ``cpu``}}" ]
+      ],
+      "output_directory": "{{user ``output_dir``}}/vbox"
+    }
+  ],
+  "provisioners": [
+      {
+        "type": "file",
+        "source": "scripts",
+        "destination": "/cygdrive/c"
+      },
+      {
+        "type": "file",
+        "source": "machines/",
+        "destination": "/cygdrive/c/scripts"
+      },
+      {
+        "type": "file",
+        "source": "tmp/__machine.ps1",
+        "destination": "/cygdrive/c/scripts/__machine.ps1"
+      },
+      {
+        "type": "shell",
+        "remote_path": "C:/Windows/Temp/script.ps1",
+        "execute_command": "{{.Vars}} powershell -ExecutionPolicy Bypass -File {{ .Path }}",
+        "scripts": [ "./scripts/_provision.ps1" ]
+    }
+  ],
+   "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 0,
+      "only": ["${BUILD_NAME}-virtualbox"],
+      "keep_input_artifact": false,
+      "vagrantfile_template": "vagrantfile.template",
+      "output": "{{user ``output_dir``}}/${BUILD_NAME}-{{.Provider}}.box"
+    }
+  ]
+}
