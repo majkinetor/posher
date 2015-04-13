@@ -39,16 +39,16 @@ Creating Machine
 
 Machines are placed in the ``machines`` directory and described in Powershell syntax. The only input for the machine apart from assets required for provisioning of vendor tools is the ISO image of the desired OS. ISO files can be linked from Internet, SMB share or locally by placing them into ``iso`` directory (using symbolic link is also an option via ``iso\New-SymLink.ps1`` function).
 
-The start defining a machine in Powershell, first check ``machines\_default.ps1`` which contains all variables supported by the build system and their default values. This file should not be edited but new Powershell file is created which sources aforementioned defaults.
+The start defining a machine in Powershell, first check `machines\_default.ps1 <https://github.com/majkinetor/posher/blob/master/machines/_default.ps1>`__ which contains all variables supported by the build system and their default values. This file should not be edited - a new Powershell file should be created for each machine which sources aforementioned defaults.
 
-As an example, lets say we want all servers for the service to have some common foundation on which we can further specialise them for different roles. We can create ``base-server.ps1`` to describe this configuration::
+As an example, lets say we want all servers for the service to have some common foundation on which we can further specialise for different roles. We can create ``base-server.ps1`` to describe this configuration::
 
     . "$PSScriptRoot/_default.ps1"
 
-    $OS_ISO_NAME                     = 'SW_DVD5_Windows_Svr_Std_and_DataCtr_2012_R2_64Bit_English_Core_MLF_X19-05182'
-    $OS_ISO_CHECKSUM                 = '6823c34a84d22886baea88f60e08b73001c31bc8'
-    $OS_TYPE                         = @{vmWare = 'windows8srv-64'; virtualbox = 'Windows2012_64'}
-    $OS_ANSWER_FILE                  = '2012_r2'
+    $OS_ISO_NAME     = 'SW_DVD5_Windows_Svr_Std_and_DataCtr_2012_R2_64Bit_English_Core_MLF_X19-05182'
+    $OS_ISO_CHECKSUM = '6823c34a84d22886baea88f60e08b73001c31bc8'
+    $OS_TYPE         = @{vmWare = 'windows8srv-64'; virtualbox = 'Windows2012_64'}
+    $OS_ANSWER_FILE  = '2012_r2'
 
     $WINDOWS_UPDATE                  = $true
     $WINDOWS_UPDATE_CATEGORIES_LIST += 'CriticalUpdates', 'SecurityUpdates'
@@ -101,9 +101,9 @@ Later we can either build this base server or create another machine based on it
     $BOX_VERSION     = 1.1
     $BOX_STORE       = "file:////itshare.mycompany.com/_images/projectX/projectx-server-web"
 
-In above example we add new Windows features to the list ``WINDOWS_FEATURE_LIST`` (hence `+=`) of already specified features in the base server. ``BOX_XXX`` variables are related to the Vagrant box generation for machine testing and development environments. Depending on the option in question, machine can inherit the option, redefine it, or add it to the list of existing options.
+In above example we add new Windows features to the list ``WINDOWS_FEATURE_LIST`` of the already specified features in the base server (hence ``+=``). ``BOX_XXX`` variables are related to the Vagrant box generation for machine testing and development environments.
 
-The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument to the build function.
+Depending on the option in question, machine can inherit the option, redefine it, or add it to the existing list of options. The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument to the build function.
 
 The build system currently supports the following options that are so commonly tweaked that they deserved to be specially handled:
 
@@ -140,7 +140,11 @@ To build machine only for specific platform use build parameter ``Only``::
 
     .\build.ps1 -Machine server-web -Only virtualbox
 
-Without this parameter buid will produce machines for all supported platforms. For detailed description of the build function execute ``man .\build.ps1 -Full``.
+Without this parameter build will produce machines for all supported platforms.
+
+If machine definition includes its own provisioners, it can use ``Data`` build option to pass arguments to it (such as credentials required for installation of 3thd party tools and so on).
+
+For detailed description of the build function execute ``man .\build.ps1 -Full``.
 
 After the build is completed, you can test the VirtualBox images using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRAT_LOCAL`` variable::
 
