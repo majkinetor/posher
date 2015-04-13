@@ -155,6 +155,7 @@ More info
 
 **Articles**
 
+- `Immutable Infrastructure <http://martinfowler.com/bliki/ImmutableServer.html>`__
 - `Virtualize Your Windows Development Environments with Vagrant, Packer, and Chocolatey <http://www.developer.com/net/virtualize-your-windows-development-environments-with-vagrant-packer-and-chocolatey-part-1.html>`__
 - `In search of a light weight windows vagrant box <http://www.hurryupandwait.io/blog/in-search-of-a-light-weight-windows-vagrant-box>`__
 
