@@ -108,10 +108,10 @@ Depending on the option in question, machine can inherit the option, redefine it
 The build system currently supports the following options that are so commonly tweaked that they deserved to be specially handled:
 
 WINDOWS_UPDATE
-    Allows insttallation of predefined set of updated with desired level of determination. To be totally deterministic specify list of KBs, otherwise specify some of the allowed categories.
+    Allows insttallation of predefined set of updates with desired level of determination. To be totally deterministic specify list of KBs, otherwise specify some of the allowed categories.
 
 WINDOWS_TWEAKS
-    Allows for installation of small tweaks from the list of supported tweaks. For complete list of tweaks see ``scripts\windows-tweaks.ps1``.
+    Allows for installation of small tweaks from the list of supported tweaks. For the complete list of tweaks see ``scripts\windows-tweaks.ps1``.
 
 WINDOWS_FEATURES
     List of Windows features that are shipped with OS and installed using ``OptionalFeatures.exe`` on workstation Windows (Control Panel -> Turn Windows Features On or Off) or using Server Manager Roles and Features GUI interface on server. To get the complete list of features using the following cmdlets: ``Get-WindowsOptionalFeature`` (workstation) and ``Get-WindowsFeature`` (server).
@@ -134,7 +134,7 @@ To generate the virtual image use ``build.ps1`` script::
 
     .\build.ps1 -Machine server-web
 
-The length of the procedure depends on machine definition - location of ISO file, whether Windows updates are enabled and so on. After the build process finishes, the images and log files will be put in the ``output\<mashine_name>`` directory. Very detailed log of complete operation will be saved in the file ``packer.log``. Distribution of the machine should include this file because it provides information about the machine installation and any step of the installation starting from the ISO file can be manually reconstructed using the information within log file and few other files that are also stored in the output folder.
+The length of the procedure depends on machine definition - location of the ISO file, whether Windows updates are enabled and so on. After the build process finishes, the images and log files will be put in the ``output\<mashine_name>`` directory. Very detailed log of complete operation is saved in the file ``packer.log``. Distribution of the machine should include this file because it provides information about the machine installation and any step of the installation starting from the ISO file can be manually reconstructed using the information within log file and few other files that are also stored in the output folder.
 
 To build machine only for specific platform use build parameter ``Only``::
 
@@ -146,7 +146,7 @@ If machine definition includes its own provisioners, it can use ``Data`` build o
 
 For detailed description of the build function execute ``man .\build.ps1 -Full``.
 
-After the build is completed, you can test the VirtualBox images using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRAT_LOCAL`` variable::
+After the build is completed, you can test the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable::
 
     vagrant destroy server-web
     vagrant box remove server-web

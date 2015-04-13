@@ -3,7 +3,7 @@
 
 Vagrant.require_version ">= 1.7.2"
 
-$store_remote = 'file:////itshare.mfin.trezor.rs/razvoj/coz/_images'
+$store_remote = 'file:////itshare.mycompany.rs/_images/projectx'
 $store_local  = '../packer/output'
 def get_box_url( name ) $local ? "#{$store_local}/#{name}/#{name}-virtualbox.box" : "#{$store_remote}/#{name}/#{name}.json" end
 
@@ -25,18 +25,9 @@ Vagrant.configure("2") do |config|
     config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
     config.vm.synced_folder "..", "/vagrant_data"
 
-    config.vm.define "devel", autostart: false do |c|
-        c.vm.box      = "coz-devel"
-        c.vm.hostname = c.vm.box
-        c.vm.box_url  = get_box_url c.vm.box
-        c.vm.network "private_network", ip: "192.168.1.10"
-        c.vm.provider "virtualbox" do |v|
-            v.name = c.vm.box
-        end
-    end
 
     config.vm.define "server-web", autostart: false  do |c|
-        c.vm.box      = "coz-server-web"
+        c.vm.box      = "projectx-server-web"
         c.vm.hostname = c.vm.box
         c.vm.box_url  = get_box_url c.vm.box
         c.vm.network "private_network", ip: "192.168.0.10"
@@ -46,7 +37,7 @@ Vagrant.configure("2") do |config|
     end
 
     config.vm.define "core", autostart: false do |c|
-        c.vm.box      = "coz-server-core-web"
+        c.vm.box      = "projectx-server-core-web"
         c.vm.hostname = c.vm.box
         c.vm.box_url  = get_box_url c.vm.box
         c.vm.network "private_network", ip: "192.168.0.11"
