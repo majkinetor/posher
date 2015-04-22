@@ -25,9 +25,17 @@ $OS_ANSWER_FILE                 = ''
 #Hash containing OS type for providers. Mandatory for best performance.
 $OS_TYPE                        = @{vmware='other'; virtualbox='other'}
 
+#Numbert of CPUs
+$CPU                            = 1
+
+#Memory size
+$MEMORY                         = 2GB
+
+#Disk size
+$DISK                           = 60GB
+
 #OpenSSH installer URL. Optional, by default empty which means that internet location is used.
 $INSTALL_OPENSSH_URL            = ''
-
 
 # Proxy server for the administrative user. Optional.
 $PROXY_SERVER                   = ''
@@ -42,9 +50,6 @@ $WINDOWS_UPDATE                 = $true
 $WINDOWS_UPDATE_KB_LIST         = @()
 
 # Array of update categories for non-deterministic updates. Optional, use all categories by default.
-# The following categories are allowed:
-#   Application, Connector, CriticalUpdates, DefinitionUpdates, DeveloperKits,
-#   FeaturePacks,  Guidance, SecurityUpdates, ServicePacks, Tools, UpdateRollups, Updates
 $WINDOWS_UPDATE_CATEGORIES_LIST = @()
 
 # Enable/disable windows features installation. Optional, on by default.

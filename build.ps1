@@ -155,6 +155,9 @@ function render_machine_template()
     $BUILD_NAME = $Machine
     $BUILD_HEADLESS = $Headless.ToString().ToLower()
 
+    $MEMORY = $MEMORY / 1MB
+    $DISK   = $DISK / 1MB
+
     #Due to the bug in some versions of posh can't use hash in expandstring: http://goo.gl/FoYzVl
     # hash works in 5 & 2, doesn't in 4
     $OS_TYPE.GetEnumerator() | % { Set-Variable "OS_TYPE_$($_.Name)" $_.Value }
@@ -163,6 +166,7 @@ function render_machine_template()
     log "Validating machine build file"
     packer validate $buildfile
     if ($LastExitCode) { log "Machine build template validation failed" -ExitCode template }
+
 }
 
 function run_packer()

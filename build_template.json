@@ -9,9 +9,9 @@
 
         "shutdown":     "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
 
-        "cpu":          "4",
-        "mem":          "4096",
-        "disk":         "61440",
+        "cpu":          "$CPU",
+        "mem":          "$MEMORY",
+        "disk":         "$DISK",
 
         "headless":     $BUILD_HEADLESS,
         "output_dir":   "output/${BUILD_NAME}"
@@ -102,7 +102,7 @@
    "post-processors": [
     {
       "type": "vagrant",
-      "compression_level": 0,
+      "compression_level": 1,
       "only": ["${BUILD_NAME}-virtualbox"],
       "keep_input_artifact": false,
       "vagrantfile_template": "vagrantfile.template",

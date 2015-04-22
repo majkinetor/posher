@@ -12,7 +12,7 @@ Enable-PSRemoting -Force #-SkipNetworkProfileCheck
 # http://blogs.technet.com/b/heyscriptingguy/archive/2013/07/30/learn-how-to-configure-powershell-memory.aspx
 # https://technet.microsoft.com/en-us/library/hh847813.aspx
 
-if (0) {
+if (1) {
     Set-Item WSMan:\localhost\MaxTimeoutms              1800000 -force
     Set-Item WSMan:\localhost\Service\AllowUnencrypted  $true   -force
     Set-Item WSMan:\localhost\Service\Auth\Basic        $true   -force

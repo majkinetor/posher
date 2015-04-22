@@ -78,6 +78,10 @@ Later we can either build this base server or create another machine based on it
 
     . "$PSScriptRoot/base-server.ps1"
 
+    $CPU    = 4
+    $MEMORY = 4GB
+    $DISK   = 60GB
+
     $WINDOWS_FEATURE_LIST += @(
     # Web server modules
         "Web-Common-Http",
@@ -101,7 +105,11 @@ Later we can either build this base server or create another machine based on it
     $BOX_VERSION     = 1.1
     $BOX_STORE       = "file:////itshare.mycompany.com/_images/projectX/projectx-server-web"
 
-In above example we add new Windows features to the list ``WINDOWS_FEATURE_LIST`` of the already specified features in the base server (hence ``+=``). ``BOX_XXX`` variables are related to the Vagrant box generation for machine testing and development environments.
+In the above example the new server is defined so that:
+
+- it uses specified number of CPUs (default is 1) and memory and disk size.
+- adds new Windows features to the ``WINDOWS_FEATURE_LIST`` of the already specified features in the base server (hence ``+=``). 
+- it defines few Vagrant related variables - ``BOX_XXX`` -  which are needed for machine testing and development environments.
 
 Depending on the option in question, machine can inherit the option, redefine it, or add it to the existing list of options. The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument to the build function.
 
