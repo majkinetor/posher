@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder "..", "/vagrant_data"
 
     config.vm.define "base-server", autostart: false do |c|
-        c.vm.box      = "eval-base-server
+        c.vm.box      = "eval-base-server"
         c.vm.hostname = c.vm.box
         c.vm.box_url  = get_box_url c.vm.box
         c.vm.network "private_network", ip: "192.168.0.11"
