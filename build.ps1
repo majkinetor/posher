@@ -83,8 +83,10 @@ function create_vagrant_metadata() {
 
 function get_revision() {
     if (gcm svn.exe) {
-        $rev = svn info . 2>&1 | sls ^Revision: | out-string
-        $rev = $rev.Trim() -split ' '
+        try {
+            $rev = svn info . 2>&1 | sls ^Revision: | out-string
+            $rev = $rev.Trim() -split ' '
+        } catch {}
         if ($rev -ne '') {return $rev[1]}
     }
     if (gcm git.exe) {
