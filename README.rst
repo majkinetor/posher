@@ -225,7 +225,7 @@ For detailed description of the build function execute ``man .\build.ps1 -Full``
 Accessing the machine
 ---------------------
 
-After the build is completed, you can boot up the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable::
+After the build is completed, you can boot up the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily test any local images (those in the ``output`` directory). Quickly switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable. Any machine that is created in ``machines`` directory can be booted this way without modifications of the ``Vagrantfile``::
 
     vagrant destroy server-web
     vagrant box remove server-web
@@ -243,6 +243,8 @@ The other way to connect to the machine is via Powershell remoting using its IP 
 For this to work the machine IP (or glob ``*``) must be specified in the  ``TrustedHosts`` parameter in the WinRM client settings::
 
     Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
+
+Once you are happy with the machines those should be deployed to the share. For this purpose Vagrant metadata json is crafted that among other things provides option to version remote boxes so that users can see when those boxes they use are later updated during ``vagrant up`` command. Developers can use those boxes but to provide access to them manual intervention of ``Vagrantfile`` is required to specify exact machine names - simply replace dynamic ruby hash ``$machines`` with static version listing machine names.
 
 More info
 ---------
