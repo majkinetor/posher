@@ -6,6 +6,7 @@ Vagrant.require_version ">= 1.7.2"
 $store_remote = 'file:////itshare.mycompany.rs/_images/projectx'
 $store_local  = '../output'
 def get_box_url( name ) $local ? "#{$store_local}/#{name}/#{name}-virtualbox.box" : "#{$store_remote}/#{name}/#{name}.json" end
+$machines = Dir["#{$store_local}/*/"].map { |a| File.basename(a) }
 
 $gui   = !ENV['VAGRANT_GUI'].nil?
 $local = ENV['VAGRANT_LOCAL']
@@ -25,13 +26,15 @@ Vagrant.configure("2") do |config|
     config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
     config.vm.synced_folder "..", "/vagrant_data"
 
-    config.vm.define "base-server", autostart: false do |c|
-        c.vm.box      = "eval-base-server"
-        c.vm.hostname = c.vm.box
-        c.vm.box_url  = get_box_url c.vm.box
-        c.vm.network "private_network", ip: "192.168.0.11"
-        c.vm.provider "virtualbox" do |v|
-            v.name = c.vm.box
+    $machines.each do |m|
+        config.vm.define m, autostart: false do |c|
+            c.vm.box      = m
+            c.vm.hostname = c.vm.box
+            c.vm.box_url  = get_box_url c.vm.box
+            c.vm.network "private_network", ip: "192.168.0.11"
+            c.vm.provider "virtualbox" do |v|
+                v.name = c.vm.box
+            end
         end
     end
 
