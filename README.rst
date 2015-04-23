@@ -111,12 +111,77 @@ In the above example the new server is defined so that:
 - adds new Windows features to the ``WINDOWS_FEATURE_LIST`` of the already specified features in the base server (hence ``+=``). 
 - it defines few Vagrant related variables - ``BOX_XXX`` -  which are needed for machine testing and development environments.
 
-Depending on the option in question, machine can inherit the option, redefine it, or add it to the existing list of options. The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument to the build function.
+Depending on the parameter, the machine can either inherit the parameter value from the parent machine, redefine it, or add it to the existing list. The machines can be defined this way to arbitrary depth and any machine in hierarchy can bu built by specifying its name as an argument of the build script.
+
+Host and guest provision
+------------------------
+
+There is an option to provision something on either the host (the one that builds the image) before or after the image build process is started, or the machine that is being built.
+
+The following machine inherits from the last one, during the build it requires Credentials for the share, exports the credentials temporarily, and uses them within new machine to install the application from the share. At the end of the build it deletes temporary file on the host::
+
+    . "$PSScriptRoot/server-web-extra.ps1"
+
+    $BUILD_START_LIST += {
+        $err = export_credential $args.Credential -Store './machines' -AskMsg 'Enter credentials for the administrative share:'
+        if ($err) { "Credential export failed - $err"; return $false }
+    }
+
+    $BUILD_END_LIST += {
+        "Deleting temporary files on host"
+        rm "./machines/*.sss" -ea ignore
+    }
+
+    $PROVISION_LIST  += {
+        "Loading credentials"
+        $f = gi "*.sss"
+        $Credential = load_credential $f
+        if (!$Credential) { throw "Can't load credentials." }
+        rm $f
+
+        New-PSDrive -Name adminshare -PSProvider FileSystem -Root \\itshare.mycompany.com\install -Credential $Credential
+        $installer = "adminshare:\ToolXYZ\toolxyz.msi"
+        start -Wait msiexec -ArgumentList "/quiet", "ADDLOCAL=ALL", "/i $installer"
+        if (Test-Path 'c:\program files\toolxyz\toolxyz.exe) { "Install OK" } else { throw "Install failed" }
+    }
+
+    function load_credential($File) {
+        if (!$File) { return }
+        $u = $File.BaseName.Replace('-', '\')
+        $p = ConvertTo-SecureString (gc $File) -Key (1..16)
+
+        New-Object -Type PSCredential -ArgumentList $u, $p
+    }
+
+    function export_credential($Credential, $Store, $AskMsg){
+        gi $Store -ErrorVariable err -ea 0 | out-null
+        if ($err) { return $err }
+
+        if (!$Credential -or $Credential.gettype() -ne [PSCredential]) {
+            $Credential = Get-Credential $Credential -Message $AskMsg
+            if (!$Credential) { Write-Error "Credential input canceled." -ev err -ea 0; return $err }
+        }
+
+        try {
+            $fp = "{0}/{1}.sss" -f $Store, $Credential.UserName.Replace('\', '-')
+            rm $fp -ea ignore
+            ConvertFrom-SecureString -SecureString $Credential.Password -Key (1..16) | out-file $fp
+        } catch { $_ }
+    }
+
+When you try to build the machine credential pop up will appear and the build continues if user enters it or fails on error. To build this machine non-interactively, parameter can be passed to the build script via ``Data`` argument::
+
+    ./build.ps1 -Machine base-server-extra -Data @{ Credential = Get-Credential } -Verbose
+
+If the provisioning code is big, put it in the separate script file in the ``./machines`` directory and source it from the provisioning scriptblock.
+
+Options
+-------
 
 The build system currently supports the following options that are so commonly tweaked that they deserved to be specially handled:
 
 WINDOWS_UPDATE
-    Allows insttallation of predefined set of updates with desired level of determination. To be totally deterministic specify list of KBs, otherwise specify some of the allowed categories.
+    Allows installation of predefined set of updates with desired level of determination. To be totally deterministic specify list of KBs, otherwise specify some of the allowed categories.
 
 WINDOWS_TWEAKS
     Allows for installation of small tweaks from the list of supported tweaks. For the complete list of tweaks see ``scripts\windows-tweaks.ps1``.
@@ -126,6 +191,9 @@ WINDOWS_FEATURES
 
 PROVISION
     A list of provisioning Powershell scriptblocks. Each machine can add its own provisioner here.
+
+FINALIZE
+    Allows finalization script to run. This script cleans up the system, deletes temporary files, defragments and shreds the disk etc. The procedure is lengthy and can be disabled.
 
 Each of those options can be turned on or off using simple Powershell statement. For instance::
 
@@ -154,12 +222,27 @@ If machine definition includes its own provisioners, it can use ``Data`` build o
 
 For detailed description of the build function execute ``man .\build.ps1 -Full``.
 
-After the build is completed, you can test the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable::
+Accessing the machine
+---------------------
+
+After the build is completed, you can boot up the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily add new local machines for testing and switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable::
 
     vagrant destroy server-web
     vagrant box remove server-web
 
-    $Env:VAGRANT_LOCAL=1; vagrant up server-web
+    $Env:VAGRANT_LOCAL=1
+    vagrant up server-web
+    vagrant rdp server-web
+
+The last two commands will fire up the machine and connect to it via remote desktop. If something goes wrong and RDP is not working you can set ``$Env:VAGRANT_GUI=1`` to show VirtualBox GUI, otherwise machine will run in the headless mode.
+
+The other way to connect to the machine is via Powershell remoting using its IP address::
+
+    etsn 192.168.0.xx -Credential localhost\vagrant
+
+For this to work the machine IP (or glob ``*``) must be specified in the  ``TrustedHosts`` parameter in the WinRM client settings::
+
+    Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
 
 
 More info
