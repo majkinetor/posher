@@ -1,1 +1,3 @@
-.vagrant
+/vagrant/.vagrant
+/output
+/iso/*.ISO

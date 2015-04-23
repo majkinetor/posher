@@ -196,7 +196,7 @@ $build_template   = "build_template.json"
 $vagrant_metadata = "vagrant_metadata.json"
 
 $buildfile        = "$output/build.json"
-$logfile          = "$output/packer.log"
+$logfile          = "$output/posher.log"
 $waitfile         = './scripts/__waitfile'
 $build_cmdline    = $MyInvocation.Line
 $build_answerfile = "$output/Autounattend.xml"
