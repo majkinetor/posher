@@ -246,6 +246,11 @@ For this to work the machine IP (or glob ``*``) must be specified in the  ``Trus
 
 Once you are happy with the machines those should be deployed to the share. For this purpose Vagrant metadata json is crafted that among other things provides option to version remote boxes so that users can see when those boxes they use are later updated during ``vagrant up`` command. Developers can use those boxes but to provide access to them manual intervention of ``Vagrantfile`` is required to specify exact machine names - simply replace dynamic ruby hash ``$machines`` with static version listing machine names.
 
+On production
+-------------
+
+Although one of the design goals of the system was to use the same machine code in the production, test and development environments with any specific configuration moved to environment variables, it is not currently tested in production environments and would at minimal require some security related actions such as removal of vagrant administrative user. Some of the future versions will address those issues.
+
 More info
 ---------
 
