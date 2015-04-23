@@ -11,7 +11,7 @@ The main features of the system are:
 - Hierarchical machine definition - machine can inherit from another one which serves as a base system and then it can add or tweak options, features and provisioning elements on top of those already defined in the parent machines. The system is made so that all the different types of machines used for specific project can be described and created in this manner while keeping the entire process `DRY <http://en.wikipedia.org/wiki/Don't_repeat_yourself>`__.
 - Strict usage of the Powershell scripting rather then outdated cmd.exe shell.
 - Extensive auditing of installed options so that one can understand what is inside the machine just by looking in the log file of the build system.
-- Support for multiple virtualization platforms via Packer. Currently, the machines are built for vmWare and VirtualBox providers with addition of Vagrant box. Other providers that Packer supports can easily by added.
+- Support for multiple virtualization platforms via Packer. Currently, the machines are built for vmWare and VirtualBox providers with addition of Vagrant box. Other providers that Packer supports can easily by added if required.
 
 Posher can be used for:
 
@@ -225,7 +225,7 @@ For detailed description of the build function execute ``man .\build.ps1 -Full``
 Accessing the machine
 ---------------------
 
-After the build is completed, you can boot up the VirtualBox image using Vagrant (wmWare testing requires proprietary Vagrant driver). ``Vagrantfile`` is designed in such way that you can easily test any local images (those in the ``output`` directory). Quickly switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable. Any machine that is created in ``machines`` directory can be booted this way without modifications of the ``Vagrantfile``::
+After the build is completed, you can boot up the VirtualBox image using Vagrant.  ``Vagrantfile`` is designed in such way that you can easily test any local images (those in the ``output`` directory). Quickly switch from using local to remote box storage using ``VAGRANT_LOCAL`` variable. Any machine that is created in ``machines`` directory can be booted this way without modifications of the ``Vagrantfile``::
 
     vagrant destroy server-web
     vagrant box remove server-web
@@ -245,6 +245,10 @@ For this to work the machine IP (or glob ``*``) must be specified in the  ``Trus
     Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
 
 Once you are happy with the machines those should be deployed to the share. For this purpose Vagrant metadata json is crafted that among other things provides option to version remote boxes so that users can see when those boxes they use are later updated during ``vagrant up`` command. Developers can use those boxes but to provide access to them manual intervention of ``Vagrantfile`` is required to specify exact machine names - simply replace dynamic ruby hash ``$machines`` with static version listing machine names.
+
+To test wmWare images with Vagrant require proprietary Vagrant driver. If those are not available testing can be done with vmWare Workstation command line tools easily, although setting advanced options such as shared folders and customizing memory and disk will require extra work::
+
+    vmrun -T ws start "output\server-web\packer-server-web-vmware.vmx"
 
 On production
 -------------
