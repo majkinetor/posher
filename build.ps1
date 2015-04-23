@@ -87,7 +87,7 @@ function get_revision() {
             $rev = svn info . 2>&1 | sls ^Revision: | out-string
             $rev = $rev.Trim() -split ' '
         } catch {}
-        if ($rev -ne '') {return $rev[1]}
+        if ($rev -and $rev -ne '') {return $rev[1]}
     }
     if (gcm git.exe) {
         $rev = git rev-parse HEAD 2>&1
