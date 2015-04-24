@@ -37,9 +37,9 @@ The easiest way to install all open source prerequisites is via `Chocolatey <htt
 Creating machine
 ----------------
 
-Machines are placed in the ``machines`` directory and described in Powershell syntax. The only input for the machine apart from assets required for provisioning of vendor tools is the ISO image of the desired OS. ISO files can be linked from Internet, SMB share or locally by placing them into ``iso`` directory (using symbolic link is also an option via ``iso\New-SymLink.ps1`` function).
+Machines are placed in the ``machines`` directory and described in Powershell syntax. The only input for the machine apart from assets required for provisioning of vendor tools is the ISO image of the desired OS. ISO files can be linked from the Internet, SMB share or locally by placing them into ``iso`` directory (using symbolic link is also an option via ``iso\New-SymLink.ps1`` function).
 
-The start defining a machine in Powershell, first check `machines\_default.ps1 <https://github.com/majkinetor/posher/blob/master/machines/_default.ps1>`__ which contains all variables supported by the build system and their default values. This file should not be edited - a new Powershell file should be created for each machine which sources aforementioned defaults.
+To start defining a machine in a Powershell, first check `machines\_default.ps1 <https://github.com/majkinetor/posher/blob/master/machines/_default.ps1>`__ which contains all variables supported by the build system and their default values. This file should not be edited - a new Powershell file should be created for each machine which sources aforementioned defaults.
 
 As an example, lets say we want all servers for the service to have some common foundation on which we can further specialise for different roles. We can create ``base-server.ps1`` to describe this configuration::
 
