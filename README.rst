@@ -110,16 +110,16 @@ In the above example the new server is defined so that it:
 - adds new Windows features to the ``WINDOWS_FEATURE_LIST`` of the already specified features in the base server (hence ``+=``).
 - defines few Vagrant related variables - ``BOX_XXX`` -  which may be needed for the development environments with the machine.
 
-Depending on the parameter, the machine can either inherit the parameter value from the parent machine, redefine it, or add it to the existing list. Machines can be defined this way to the arbitrary depth and any machine in the hierarchy can bu built by specifying its name as an argument of the build script.
+Depending on the parameter, the machine can either inherit the parameter value from the parent machine, redefine it, or add it to the existing list. Machines can be defined this way to the arbitrary depth and any machine in the hierarchy can be built by specifying its name as an argument of the build script.
 
 Host and guest provision
 ------------------------
 
-There is an option to provision something on either the host (the one that builds the image) before or after the image build process is started, or the machine that is being built.
+There is an option to specify provision scriptblock on either the host (the one that builds the image, before or after the image build process is started) or the machine that is being built.
 
-The following machine inherits from the last one, during the build it requires Credentials for the share, exports the credentials temporarily, and uses them within new machine to install the application from the share. At the end of the build it deletes temporary file on the host::
+The following machine ``server-web-extra`` inherits from the ``server-web`` and during the build it requires credentials for the share, exports the credentials temporarily to copy and use them within the context of the new machine in order to install the application from the share. At the end of the build it deletes temporary file on the host::
 
-    . "$PSScriptRoot/server-web-extra.ps1"
+    . "$PSScriptRoot/server-web.ps1"
 
     #Executes on host
     $BUILD_START_LIST += {
@@ -182,19 +182,19 @@ WINDOWS_TWEAKS
     Allows for installation of small tweaks from the list of supported tweaks. For the complete list of tweaks see ``scripts\windows-tweaks.ps1``.
 
 WINDOWS_FEATURES
-    Enables the list of the Windows features that are shipped with OS and installed using ``OptionalFeatures.exe`` on a workstation Windows (Control Panel -> Turn Windows Features On or Off) or using Server Manager Roles and Features GUI interface on a server. To get the complete list of features, use the following cmdlets: ``Get-WindowsOptionalFeature`` (workstation) and ``Get-WindowsFeature`` (server).
+    Enables the list of the Windows features that are shipped with the OS and installed using ``OptionalFeatures.exe`` on a workstation Windows (Control Panel -> Turn Windows Features On or Off) or using Server Manager Roles and Features GUI interface on a server. To get the complete list of features, use the following cmdlets: ``Get-WindowsOptionalFeature`` (workstation) and ``Get-WindowsFeature`` (server).
 
 PROVISION
-    Enables the list of provisioning Powershell scriptblocks. Each machine can add its own provisioner in ``$PROVISION_LIST`` list.
+    Enables the list of provisioning Powershell scriptblocks. Each machine can add its own provisioner in the ``$PROVISION_LIST`` list.
 
 FINALIZE
-    Allows finalization script to run. This script cleans up the system, deletes temporary files, defragments and shreds the disk etc. The procedure is lengthy and can be disabled.
+    Allows finalization script to run. This script cleans up the system, deletes temporary files, defragments and shreds the disk etc. The procedure is lengthy and can be disabled while testing.
 
 Each of those options can be turned on or off using simple Powershell statement. For instance::
 
     $WINDOWS_UPDATE = $false
 
-will turn off integrated Windows Update build option which may be useful during testing as updates usually take a long time to finish.
+will turn off integrated Windows update build option which may be useful during testing as updates usually take a long time to finish.
 
 For detailed description of all options check out comments in the ``machines\_default.ps1`` script.
 
@@ -205,13 +205,13 @@ To generate the virtual image use ``build.ps1`` script::
 
     .\build.ps1 -Machine server-web
 
-The length of the procedure depends on the machine definition - location of the ISO file, whether Windows updates are enabled and so on. After the build process finishes, the images and log files will be put in the ``output\<mashine_name>`` directory. Detailed log of the complete operation is saved in the file ``posher.log``. Distribution of the machine should include this file because it provides information about the machine installation and any step of the installation starting from the ISO file can be manually reconstructed using the information within log file and few other files that are also stored in the output folder.
+The length of the procedure depends on the machine definition - location of the ISO file, whether Windows updates are enabled and so on. After the build process finishes, the images and log files will be available in the ``output\<mashine_name>`` directory. Detailed log of the complete operation is saved in the file ``posher.log``. Distribution of the machine should include this file because it provides information about the machine installation and any step of the installation starting from the ISO file can be manually reconstructed using the information within the log file and few other files that are also stored in the output folder.
 
-To build machine only for specific platform use build parameter ``Only``::
+To build the machine only for the specific platform use the build parameter ``Only``::
 
     .\build.ps1 -Machine server-web -Only virtualbox
 
-Without this parameter build will produce machines for all supported platforms.
+Without this parameter build will produce machines for all supported platforms in parallel.
 
 When you try to build above machine with host and guest provisioning ( server-web-extra ), credential pop up will appear on the host and the build continues after the user enters it correctly or fails on any error. To build this machine non-interactively, parameter can be passed to the build script via ``Data`` argument::
 
