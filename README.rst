@@ -63,8 +63,7 @@ As an example, lets say we want all servers for the service to have some common 
 
     $WINDOWS_FEATURE = $true
     $WINDOWS_FEATURE_LIST = @(
-        "PowerShell", "PowerShell-ISE",
-        "NET-Framework-45-Core"
+        "PowerShell-ISE"
     )
 
 This will define the ``base-server`` so that:
@@ -72,7 +71,7 @@ This will define the ``base-server`` so that:
 - It will use specified ISO image and answer file with the given name ( ``OS_ISO_NAME`` and ``OS_ANSWER_FILE`` variables ).
 - The build option ``WINDOWS_UPDATE`` is enabled which means that during OS setup the specified windows updates will be installed. In this example only critical and security updates are installed (variable ``WINDOWS_UPDATE_CATEGORIES_LIST``). The commented option ``WINDOWS_UPDATE_KB_LIST`` is used for deterministic updates as defining updates via category list will produce non-deterministic operating system on which updates are installed as soon as they are available which can potentially create a problem with some applications.
 - The build option ``WINDOWS_TWEAKS`` is enabled which is integrated list of small Windows customizations which are self describing in above case. The option accepts single script block which calls 3 functions that tweak OS installation.
-- At the end, there are few Windows features that will be installed on the base server - Powershell and Net-Framework-Core.
+- At the end, there is one Windows features that will be installed on the base server - Powershell-ISE.
 
 Later we can either build this base server or create another machine based on it. If, for instance, we need IIS web server on top of the base server definition, we can define the machine ``server-web.ps1`` such as::
 
