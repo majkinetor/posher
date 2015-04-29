@@ -1,4 +1,6 @@
-"==> Install vagrant public key"
+"==> Set Vagrant User"
+
+"Install vagrant public key"
 
 if (Test-Path "A:\vagrant.pub")
 {
@@ -19,5 +21,5 @@ else {
 
 "Vagrant public key installed"
 
-"==> Disable password expiration"
-Get-WmiObject -Class Win32_UserAccount -Filter "name = 'vagrant'"  | Set-WmiInstance -Argument @{PasswordExpires = 0}
+"Disable password expiration for user vagrant"
+Get-WmiObject -Class Win32_UserAccount -Filter "name = 'vagrant'"  | Set-WmiInstance -Argument @{PasswordExpires = 0} |  Select Name, PasswordExpires
