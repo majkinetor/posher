@@ -16,7 +16,7 @@ if (!(Test-Path ./__machine.ps1)) { throw "Machine variables are not present" }
 ./Enable-RDP.ps1
 ./Enable-WinRM.ps1
 
-./vagrant-ssh.ps1
+./Set-VagrantUser.ps1
 ./Install-OpenSSH.ps1 -AutoStart -URL $INSTALL_OPENSSH_URL
 
 "`n==| Powershell Windows setup completed at $(get-date)"

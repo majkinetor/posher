@@ -2,6 +2,7 @@
 
 if (Test-Path "A:\vagrant.pub")
 {
+    "Using A:\vagrant.pub"
     mkdir "c:\Users\vagrant\.ssh" -ea ignore
     cp "A:\vagrant.pub" "C:\Users\vagrant\.ssh\authorized_keys"
 }
@@ -18,3 +19,5 @@ else {
 
 "Vagrant public key installed"
 
+"==> Disable password expiration"
+Get-WmiObject -Class Win32_UserAccount -Filter "name = 'vagrant'"  | Set-WmiInstance -Argument @{PasswordExpires = 0}
