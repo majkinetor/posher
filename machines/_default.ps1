@@ -59,7 +59,7 @@ $WINDOWS_FEATURE                = $true
 $WINDOWS_FEATURE_LIST           = @()
 
 # Remove all unused features from the disk
-$WINDOWS_FEATURE_PURGE          = $true
+$WINDOWS_FEATURE_PURGE          = $false
 
 # Enable/disable small Windows tweaks. Optional, on by default.
 $WINDOWS_TWEAKS                 = $true

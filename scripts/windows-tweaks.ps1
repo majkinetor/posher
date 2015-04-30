@@ -19,7 +19,9 @@ function Explorer-Feature {
        [switch]$ShowFullPath,
        [switch]$ShowRun,
        [switch]$ShowAdminTools,
+       # Add context menu to open Powershell in the folder
        [switch]$PSOpenHere,
+       # Disable Windows start page
        [switch]$NoStartPage
     )
     show-args (Get-Command $MyInvocation.InvocationName)
@@ -63,7 +65,11 @@ function System-Feature {
         [switch]$NoUAC,
         [switch]$NoShutdownTracker,
         [switch]$NoAutoUpdate,
-        [switch]$DisableFirewall
+        [switch]$DisableFirewall,
+        # Disable password expiration for all users
+        [switch]$NoPasswordExpiration,
+        # Use Powershell as default shell on Windows Core
+        [switch]$SetPoshAsDefault
     )
     show-args (Get-Command $MyInvocation.InvocationName)
 
@@ -91,7 +97,11 @@ function System-Feature {
             $Updates.Refresh()
         }
     }
+
     if ($DisableFirewall) { Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled false -PassThru | select Name,Enabled | ft -Autosize }
+    if ($NoPasswordExpiration) { net accounts /maxpwage:unlimited }
+
+    if ($SetPoshAsDefault) { ./Set-PoshAsDefault.ps1 }
 }
 
 &$Features
