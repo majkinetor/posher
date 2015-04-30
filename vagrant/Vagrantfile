@@ -29,9 +29,9 @@ Vagrant.configure("2") do |config|
     $machines.each do |m|
         config.vm.define m, autostart: false do |c|
             c.vm.box      = m
-            c.vm.hostname = c.vm.box
+            #c.vm.hostname = c.vm.box
             c.vm.box_url  = get_box_url c.vm.box
-            c.vm.network "private_network", ip: "192.168.0.11"
+            c.vm.network "private_network", ip: "192.168.0.10"
             c.vm.provider "virtualbox" do |v|
                 v.name = c.vm.box
             end
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider "virtualbox" do |v|
         v.gui    = $gui
-        v.memory = 4096
-        v.cpus   = 4
+        #v.memory = 4096
+        #v.cpus   = 4
     end
 end
