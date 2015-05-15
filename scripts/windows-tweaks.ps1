@@ -22,7 +22,9 @@ function Explorer-Feature {
        # Add context menu to open Powershell in the folder
        [switch]$PSOpenHere,
        # Disable Windows start page
-       [switch]$NoStartPage
+       [switch]$NoStartPage,
+       # Disable automatic tray icon hiding for all profiles
+       [switch]$NoAutoTray
     )
     show-args (Get-Command $MyInvocation.InvocationName)
 
@@ -48,6 +50,9 @@ function Explorer-Feature {
     if ($NoStartPage) { #http://goo.gl/MfzTj6
         $key = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartPage"
         Set-ItemProperty $key OpenAtLogon 0
+    }
+    if ($NoAutoTray) {
+        Set-ItemProperty  HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer EnableAutoTray 0
     }
 }
 
