@@ -82,14 +82,14 @@ function create_vagrant_metadata() {
 }
 
 function get_revision() {
-    if (gcm svn.exe) {
+    if (gcm svn.exe -ea 0) {
         try {
             $rev = svn info . 2>&1 | sls ^Revision: | out-string
             $rev = $rev.Trim() -split ' '
         } catch {}
         if ($rev) {return $rev[1]}
     }
-    if (gcm git.exe) {
+    if (gcm git.exe -ea 0) {
         $rev = git rev-parse HEAD 2>&1
         if ($rev -notlike '*Not a git repository*') { return $rev }
     }
@@ -174,12 +174,13 @@ function render_machine_template()
 function run_packer()
 {
     log "Building packer command line"
-    $pa = @("build", "-color=false")
+    $pa = @("build","-color=false")
     if ($Only) { $pa += "-only=$Machine-$Only" }
     $pa += $buildfile
+    $cmd = "packer $pa"
 
-    log "Executing packer:`n  packer $pa`n"
-    & packer -ArgumentList $pa | log
+    log "Executing packer:`n  $cmd`n"
+    iex $cmd | log
     if ($LastExitCode) { log "Packer build failed (ExitCode: $LastExitCode)" -ExitCode packer }
 }
 
